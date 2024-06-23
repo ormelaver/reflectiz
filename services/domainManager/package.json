@@ -2,10 +2,15 @@
   "name": "domain-service",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/server.js",
-  "type": "module",
+  "main": "dist/src/index.js",
+  "module": "module",
+  "engines": {
+    "node": "18.17.1"
+  },
   "scripts": {
-    "start": "ts-node-dev src/server.ts"
+    "build": "tsc",
+    "start": "npm run build && node dist/src/index.js",
+    "dev": "nodemon"
   },
   "author": "",
   "license": "ISC",
@@ -18,5 +23,9 @@
     "mongoose": "^8.4.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2"
   }
 }

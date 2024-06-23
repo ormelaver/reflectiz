@@ -6,11 +6,13 @@ class DomainManagerController {
   async addDomain(req: Request, res: Response): Promise<void> {
     try {
       const domainName = req.body.domainName;
+      console.log('domainName', domainName);
+      res.status(201).json(domainName);
       // const domainService = await DomainManagerService.init();
-      const newDomain = await DomainManagerService.addDomain(
-        domainName.toLowerCase()
-      );
-      res.status(201).json(newDomain);
+      // const newDomain = await DomainManagerService.addDomain(
+      //   domainName.toLowerCase()
+      // );
+      // res.status(201).json(newDomain);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

@@ -1,25 +1,27 @@
-# docker-compose.yml
 version: '3.8'
 
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongo-data:/data/db
-
-  domain-service:
+  manager:
     build:
-      context: ./services/domainManager
-      dockerfile: Dockerfile
+      context: . #. means this docker-compose is inside the node api home directory, in this scenario, you can even abandon this option.
+      dockerfile: services/domainManager/Dockerfile
     ports:
-      - '3000:3000'
-    environment:
-      - MONGO_URI=mongodb://mongodb:27017/domains
+      - '4000:4000'
     depends_on:
       - mongodb
+    env_file:
+      - .env # Use the same .env file for both services
+    working_dir: /usr/src/app
+    volumes:
+      - /services/domainManager:/usr/src/app
+    command: npm run dev
+
+  mongodb:
+    image: mongo
+    env_file:
+      - .env # Use the same .env file for both services
+    volumes:
+      - mongodb-data:/data/db
 
 volumes:
-  mongo-data:
+  mongodb-data:
