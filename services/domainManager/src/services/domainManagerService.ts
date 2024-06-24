@@ -11,15 +11,15 @@ class DomainManagerService {
   //   return new DomainManagerService(mongo);
   // }
 
-  async addDomain(domain: string): Promise<DomainDoc> {
+  async addDomain(domainName: string): Promise<DomainDoc> {
     try {
-      // const existingDomain = await this.mongoHandle.getDomain(domain);
-      // if (existingDomain) {
-      //   throw new Error('Domain already exists');
-      // }
+      const existingDomain = await Domain.findOne({ domainName });
+      if (existingDomain) {
+        throw new Error('Domain already exists');
+      }
 
       const domainObject = {
-        domainName: domain,
+        domainName,
         status: DomainStatus.PENDING,
         lastScannedAt: new Date(),
         data: {},
@@ -30,17 +30,21 @@ class DomainManagerService {
     } catch (error) {
       throw error;
     }
-    // return newDomain.toObject();
-
-    // const newDomain = Domain.build(domain);
-
-    // await newDomain.save();
-    // return newDomain;
   }
 
-  // async getDomainById(id: string): Promise<DomainType | null> {
-  //   // TODO: Implement domain retrieval logic
-  // }
+  async getDomainInfo(domainName: string): Promise<DomainDoc | boolean> {
+    try {
+      const existingDomain = await Domain.findOne({ domainName });
+      if (!existingDomain) {
+        await this.addDomain(domainName);
+        return false;
+      } else {
+        return existingDomain;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new DomainManagerService();

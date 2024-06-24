@@ -3,23 +3,28 @@ version: '3.8'
 services:
   manager:
     build:
-      context: . #. means this docker-compose is inside the node api home directory, in this scenario, you can even abandon this option.
-      dockerfile: services/domainManager/Dockerfile
+      context: services/domainManager
+      dockerfile: Dockerfile
     ports:
       - '4000:4000'
     depends_on:
       - mongodb
     env_file:
-      - .env # Use the same .env file for both services
-    working_dir: /usr/src/app
-    volumes:
-      - /services/domainManager:/usr/src/app
-    command: npm run dev
+      - .env
+    command: npm run start
+
+  scanner:
+    build:
+      context: services/domainScanner
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+    command: npm run start
 
   mongodb:
     image: mongo
-    env_file:
-      - .env # Use the same .env file for both services
     volumes:
       - mongodb-data:/data/db
 

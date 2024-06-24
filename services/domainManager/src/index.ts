@@ -14,12 +14,12 @@ const PORT = process.env.PORT;
 
 const start = async () => {
   try {
-    // if (!process.env.MONGO_URI) {
-    //   throw new Error('MONGO_URI must be defined');
-    // }
+    if (!process.env.MONGO_URI) {
+      throw new Error('MONGO_URI must be defined');
+    }
 
-    // await mongoose.connect(process.env.MONGO_URI);
-    // await Domain.init();
+    await mongoose.connect(process.env.MONGO_URI);
+    await Domain.init();
     app.listen(PORT, () => {
       console.log('Database indexed!');
       console.log('server listening on port ' + PORT);
