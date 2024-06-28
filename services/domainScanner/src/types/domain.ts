@@ -1,12 +1,5 @@
-export interface DomainType {
-  domainName: string;
-  status: 'pending' | 'completed' | 'failed';
-  lastScannedAt: Date;
-  data: object;
-}
-
 export enum DomainStatus {
   PENDING = 'pending',
+  SCANNING = 'scanning',
   COMPLETED = 'completed',
-  FAILED = 'failed',
 }

@@ -1,17 +1,10 @@
 import { Domain, DomainDoc } from '../models/domain';
-import { DomainStatus } from '../types/domain';
+import { DomainStatus, Response } from '../types/domain';
 
 class DomainManagerService {
-  //singleton?
-
   constructor() {}
 
-  // public static async init() {
-  //   const mongo = await Mongo.getInstance();
-  //   return new DomainManagerService(mongo);
-  // }
-
-  async addDomain(domainName: string): Promise<DomainDoc> {
+  async addDomain(domainName: string): Promise<Response> {
     try {
       const existingDomain = await Domain.findOne({ domainName });
       if (existingDomain) {
@@ -21,25 +14,39 @@ class DomainManagerService {
       const domainObject = {
         domainName,
         status: DomainStatus.PENDING,
-        lastScannedAt: new Date(),
+        scanDate: new Date(),
         data: {},
       };
       const newDomain = await Domain.build(domainObject);
       await newDomain.save();
-      return newDomain;
+      return { message: 'Domain added for scanning', data: newDomain };
     } catch (error) {
       throw error;
     }
   }
 
-  async getDomainInfo(domainName: string): Promise<DomainDoc | boolean> {
+  async getDomainInfo(domainName: string): Promise<Response> {
     try {
-      const existingDomain = await Domain.findOne({ domainName });
-      if (!existingDomain) {
+      const response = await Domain.findOne({ domainName });
+      if (!response) {
         await this.addDomain(domainName);
-        return false;
+        return { message: 'Domain not found - added for scanning' };
       } else {
-        return existingDomain;
+        const status = response.status;
+        if (status === DomainStatus.PENDING) {
+          return { message: 'Domain is pending scan. Please try again later' };
+        }
+        if (status === DomainStatus.SCANNING) {
+          return {
+            message:
+              'Domain is currently being scanned. Please try again in a few minutes',
+          };
+        } else {
+          return {
+            message: 'Domain info found',
+            data: response,
+          };
+        }
       }
     } catch (error) {
       throw error;

@@ -1,12 +1,12 @@
-export interface DomainType {
-  domainName: string;
-  status: 'pending' | 'completed' | 'failed';
-  lastScannedAt: Date;
-  data: object;
+import { DomainDoc } from '../models/domain';
+
+export interface Response {
+  message: string;
+  data?: DomainDoc;
 }
 
 export enum DomainStatus {
   PENDING = 'pending',
+  SCANNING = 'scanning',
   COMPLETED = 'completed',
-  FAILED = 'failed',
 }

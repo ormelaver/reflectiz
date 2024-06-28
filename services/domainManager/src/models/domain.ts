@@ -1,10 +1,11 @@
 import mongoose, { ObjectId } from 'mongoose';
+import { DomainStatus } from '../types/domain';
 
 // an interface that describes the properties required to create a new Domain
 export interface DomainAttrs {
   domainName: string;
-  status: 'pending' | 'completed' | 'failed';
-  lastScannedAt: Date;
+  status: DomainStatus;
+  scanDate: Date;
   data: object;
 }
 
@@ -18,7 +19,7 @@ export interface DomainDoc extends mongoose.Document {
   id: ObjectId;
   domainName: string;
   status: string;
-  lastScannedAt: Date;
+  scanDate: Date;
   data: object;
 }
 const DomainSchema = new mongoose.Schema(
@@ -31,7 +32,7 @@ const DomainSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    lastScannedAt: {
+    scanDate: {
       type: Date,
       required: true,
       default: Date.now,

@@ -1,16 +1,15 @@
 import { ScannerType } from '../types/scanner';
-import { IScanner } from '../scanners/baseScanner';
+import { BaseScanner } from '../scanners/baseScanner';
 import { VirusTotalScanner } from '../scanners/virusTotalScanner';
 import { WhoisScanner } from '../scanners/whoisScanner';
 
 class ScannerFactory {
-  private scanners: { [key: string]: IScanner } = {};
-  private validSources: Set<string> = new Set();
+  private scanners: { [key: string]: BaseScanner } = {};
 
   constructor() {}
 
-  createScanner(type: ScannerType): IScanner {
-    let scanner: IScanner;
+  createScanner(type: ScannerType): BaseScanner {
+    let scanner: BaseScanner;
     switch (type) {
       case ScannerType.WHOIS:
         scanner = new WhoisScanner();
@@ -24,18 +23,6 @@ class ScannerFactory {
         throw new Error('Invalid scanner type');
     }
     return scanner;
-  }
-
-  //   getScanner(name: string): ScannerType | null {
-  //     return this.scanners[name] || null;
-  //   }
-
-  async scanAll(domain: string): Promise<{ [key: string]: object }> {
-    const results: { [key: string]: object } = {};
-    for (const [name, scanner] of Object.entries(this.scanners)) {
-      results[name] = await scanner.scan(domain);
-    }
-    return results;
   }
 }
 
