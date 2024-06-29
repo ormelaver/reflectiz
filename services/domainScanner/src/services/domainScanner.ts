@@ -13,7 +13,7 @@ export class DomainScanner {
   private scanners: BaseScanner[] = [];
   private amqpClient = AmqpClient.getInstance();
   private queueName = process.env.AMQP_QUEUE_NAME || 'results';
-  private cronScanInterval = process.env.CRON_SCAN_INTERVAL || '*/5 * * * *';
+  private cronScanInterval = process.env.CRON_SCAN_INTERVAL || '0 0 1 * *';
 
   private constructor(creationDate: Date) {
     this.scanners = scannerList.map((scanner: ScannerType) =>
