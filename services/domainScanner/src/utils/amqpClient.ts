@@ -22,7 +22,7 @@ export class AmqpClient {
         try {
           this.connection = await amqp.connect(uri);
           console.log('Connected to AMQP successfully.');
-          break; // Exit loop on success
+          break;
         } catch (error: any) {
           retries--;
           console.error(
@@ -31,9 +31,9 @@ export class AmqpClient {
           );
           if (retries === 0) {
             console.error('Error connecting to AMQP, retries maxed out.');
-            throw error; // Rethrow the last error after exhausting retries
+            throw error;
           }
-          await new Promise((resolve) => setTimeout(resolve, 30000)); // Wait 1 second before retrying
+          await new Promise((resolve) => setTimeout(resolve, 30000));
         }
       }
     }
@@ -76,12 +76,13 @@ export class AmqpClient {
 
   public async getQueueSize(queueName: string): Promise<number> {
     const queueData = await this.channel!.checkQueue(queueName);
-    console.log('QQQQQQQQQQQQQQQ DATA', queueData);
     return queueData.messageCount;
   }
+
   public async ackMsg(msg: amqp.Message): Promise<void> {
     await this.channel!.ack(msg);
   }
+
   public async createChannel(): Promise<amqp.Channel> {
     if (!this.connection) {
       throw new Error('Connection not established');
