@@ -15,15 +15,15 @@ export class DomainScanner {
   private queueName = process.env.AMQP_QUEUE_NAME || 'results';
   private cronScanInterval = process.env.CRON_SCAN_INTERVAL || '0 0 1 * *';
 
-  private constructor(creationDate: Date) {
+  private constructor() {
     this.scanners = scannerList.map((scanner: ScannerType) =>
       scannerFactory.createScanner(scanner)
     );
   }
 
-  public static getInstance(creationDate: Date): DomainScanner {
+  public static getInstance(): DomainScanner {
     if (!DomainScanner.instance) {
-      DomainScanner.instance = new DomainScanner(creationDate);
+      DomainScanner.instance = new DomainScanner();
     }
     return DomainScanner.instance;
   }
