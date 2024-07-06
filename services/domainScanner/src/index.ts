@@ -8,7 +8,7 @@ import { DomainScanner } from './services/domainScanner';
 const timePeriod = process.env.CRON_SCAN_INTERVAL || '*/5 * * * *';
 
 const scheduleTask = async (cronTime: string) => {
-  const scanner = DomainScanner.getInstance(new Date());
+  const scanner = DomainScanner.getInstance();
   cron.schedule(cronTime, async () => {
     try {
       console.log('Starting scan...');
