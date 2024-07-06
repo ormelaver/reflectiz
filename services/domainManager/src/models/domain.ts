@@ -53,7 +53,7 @@ const DomainSchema = new mongoose.Schema(
   }
 );
 
-DomainSchema.index({ lastScannedAt: 1 });
+DomainSchema.index({ scanDate: 1 });
 DomainSchema.index({ status: 1 });
 DomainSchema.statics.build = (attrs: DomainAttrs) => {
   return new Domain(attrs);
