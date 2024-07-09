@@ -31,18 +31,25 @@ export class DomainScanner {
   public async scanAllSources(): Promise<void> {
     const domainsToScan = await this.getDomainsToScan();
     await this.updateDomainStatus(domainsToScan, DomainStatus.SCANNING);
-    for (const domainDoc of domainsToScan) {
+
+    const scanPromises = domainsToScan.map(async (domainDoc) => {
       const domainName = domainDoc.domainName;
       let messageToSend: Record<string, any> = { [domainName]: {} };
-      for (const scanner of this.scanners) {
-        try {
-          const result = await scanner.scan(domainName);
-          const resultObject = JSON.parse(result);
-          messageToSend[domainName][resultObject.scannerType] = resultObject;
-        } catch (error) {
-          console.error(`Error scanning domain ${domainName}:`, error);
-        }
-      }
+
+      const scannerPromises = this.scanners.map((scanner) => {
+        return scanner
+          .scan(domainName)
+          .then((result) => {
+            const resultObject = JSON.parse(result);
+            messageToSend[domainName][resultObject.scannerType] = resultObject;
+          })
+          .catch((error) => {
+            console.error(`Error scanning domain ${domainName}:`, error);
+          });
+      });
+
+      await Promise.allSettled(scannerPromises);
+
       messageToSend.isFirstScan = domainDoc.status === DomainStatus.PENDING;
       messageToSend.domainName = domainName;
 
@@ -50,8 +57,9 @@ export class DomainScanner {
         this.queueName,
         JSON.stringify(messageToSend)
       );
-    }
+    });
 
+    await Promise.allSettled(scanPromises);
     await this.saveResults();
   }
 
